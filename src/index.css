@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+/* ── Tokens ────────────────────────────────────────────────────────────────
+   Near-monochrome on near-black. Colour is a rationed accent, never a surface. */
+@theme {
+  --color-ink-950: #060807;   /* page background — near-black with a green cast */
+  --color-ink-900: #0b0e0c;   /* alternating section band */
+  --color-ink-800: #121613;   /* raised card */
+  --color-ink-700: #1b211d;   /* border / divider on dark */
+  --color-ink-600: #2a332d;
+
+  /* "accent" is white by default — a monochrome brand. */
+  --color-accent-300: #a3a3a3;
+  --color-accent-400: #e5e5e5;
+  --color-accent-500: #ffffff;
+  --color-accent-600: #d4d4d4;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* A whole-brand repaint is these four lines on a scoped class — Tailwind v4 compiles
+   text-accent-400 to var(--color-accent-400), so nothing downstream is hardcoded.
+   Apply on the app SHELL, not the page: nav and footer are siblings of <main>, and a
+   page-scoped theme leaves a white button in the bar above a coloured page.
+   Safe only because accent-* never wears running text — audit that before repainting. */
+.theme-signal {
+  --color-accent-300: #6c9c81;
+  --color-accent-400: #8fceab;
+  --color-accent-500: #a8e6c1;
+  --color-accent-600: #79bd95;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;   /* anchors clear the fixed nav */
+  background: var(--color-ink-950);
+}
+
+body {
+  background: var(--color-ink-950);
+  color: #fff;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: rgba(255, 255, 255, 0.16); }
+
+/* The signature of the whole layout: a hairline that opens every section
+   and fades out to the right. It does the job a border would do, quieter. */
+.sol-rule {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 70%);
+}
+
+.glass {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+/* Below-the-fold sections skip layout and paint until they are near the viewport.
+   600px is a deliberate over-estimate — under-guessing makes the scrollbar jump. */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+/* Hero type sits on live footage; the shadow keeps it legible over a bright frame
+   without a flat scrim washing the whole picture down. */
+.hero-type { text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.4); }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
